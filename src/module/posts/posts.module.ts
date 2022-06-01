@@ -2,12 +2,12 @@
 import { Module } from '@nestjs/common';
 import { JwtModule } from '@nestjs/jwt';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { Posts } from 'src/entitty/post.entity';
+import { Posts } from '../../entitty/post.entity';
 import { PostsController } from './posts.controller';
 import { PostsService } from './posts.service';
-import { User } from 'src/entitty/user.entity';
+import { User } from '../../entitty/user.entity';
 import { UserService } from '../user/user.service';
-import { JwtTokenService } from 'src/config/providers/jwtService.service';
+import { JwtTokenService } from '../../config/providers/jwtService.service';
 
 @Module({
     imports: [

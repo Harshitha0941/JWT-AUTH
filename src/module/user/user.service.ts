@@ -1,16 +1,18 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 /* eslint-disable @typescript-eslint/no-var-requires */
 /* eslint-disable prettier/prettier */
-import {  Injectable } from '@nestjs/common';
+import {  Injectable, UsePipes } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { InjectRepository } from '@nestjs/typeorm';
-import { JwtTokenService } from 'src/config/providers/jwtService.service';
+import { JwtTokenService } from '../../config/providers/jwtService.service';
 
 import { Repository } from 'typeorm';
 import { UserDto } from './dto/user.dto';
 import * as bcrypt from 'bcrypt';
 import { Response, Request} from 'express';
-import { User } from 'src/entitty/user.entity';
-import { WrongCredentialsException } from 'src/config/filters/customException.exception';
+import { User } from '../../entitty/user.entity';
+import { WrongCredentialsException } from '../../config/filters/customException.exception';
+import { AuthenticationMiddleware } from '../../config/middleware/authentication.middleware';
 
 // import require from 'express';
 @Injectable()
@@ -41,7 +43,6 @@ export class UserService {
 
   async login(userDto: UserDto, response: Response, req: Request) {
     const user:User = await this.userLogin(userDto.userName);
-    console.log(user);
     if (!user) {
       throw new WrongCredentialsException();
     }
@@ -51,13 +52,13 @@ export class UserService {
     const jwt = await this.jwtToken.generateToken(user);
     response.cookie('jwt', jwt, { httpOnly: true });
     const cookie = req.cookies['jwt'];
-    console.log("from user jwt",cookie);
-    console.log("Access data from cookie",cookie)
-    const result = await this.jwtToken.verifyToken(cookie);
+    // const result = await this.jwtToken.verifyToken(cookie);
+
     // const LocalStorage = require('node-localstorage').LocalStorage,
     // localStorage = new LocalStorage('./scratch');
     // const result = await this.jwtToken.verifyToken(localStorage);
-    return cookie;
+    return jwt;
+
   }
 
   async userLogin(userName: string) {

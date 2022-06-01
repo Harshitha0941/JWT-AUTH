@@ -26,4 +26,9 @@ export class PostsDto {
       @ApiProperty()
       description: string;
 
+      
+      is_featured: string;
+      created_date:string;
+      updated_date :string
+
 }

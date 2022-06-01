@@ -1,5 +1,5 @@
 /* eslint-disable prettier/prettier */
-import { Injectable } from '@nestjs/common';
+import { forwardRef, Inject, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm/repository/Repository';
 import { Posts } from './../../entitty/post.entity';
@@ -7,18 +7,19 @@ import { PostsDto } from './dto/posts.dto';
 import {  Request } from 'express';
 import { JwtService } from '@nestjs/jwt';
 import { UserService } from '../user/user.service';
-import { IdNotFoundException, UserNotFoundException } from 'src/config/filters/customException.exception';
+import { IdNotFoundException, UserNotFoundException } from '../../config/filters/customException.exception';
 
 @Injectable()
 export class PostsService {
     constructor(
         @InjectRepository(Posts)
+        @Inject(forwardRef(() => UserService))
         private postRepo: Repository<Posts>,
         private jwtService: JwtService,
         private userService: UserService,
     ){}
 
-    async addPosts(postsDto:PostsDto, request:Request):Promise<any>{
+    async addPosts(postsDto:PostsDto, request:Request):Promise<string>{
         const cookie = request.cookies['jwt'];
         if(!cookie){
             throw new UserNotFoundException();
@@ -40,7 +41,7 @@ export class PostsService {
         
     }
 
-    async getAllPosts(request:Request):Promise<any>{
+    async getAllPosts(request:Request):Promise<PostsDto[]>{
         const cookie = request.cookies['jwt'];
         if(!cookie){
             throw new UserNotFoundException();
